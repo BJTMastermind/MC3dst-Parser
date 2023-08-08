@@ -1,0 +1,10 @@
+# Compiled class file
+*.class
+
+# Misc files
+/bin/
+/.vscode/
+*.directory
+
+# Package Files
+*.jar
