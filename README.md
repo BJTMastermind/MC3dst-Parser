@@ -1,29 +1,35 @@
-<h1 align="center">Template Repository</h1>
+# Minecraft 3dst Parser
 
-  A Template Repository That I Can Use to Make New Repositories I Make in The Future Easier.                                                                                         
+A Minecraft: 3DS Edition 3dst Image File Parser and Assembler
 
-## Plan To Add / To Do
+## How To Use
 
-- [ ] Item 1
-- [ ] Item 2
-- [ ] Item 3
+* Download `MC3dstParser.java`from [Releases](https://github.com/BJTMastermind/MC3dst-Parser/releases) tab.
+* Add the library into your project.
+* Import `me.bjtmastermind.mc3dstparser.MC3dstFile` to use.
 
-## How To Use (UI)
+Example Code:
 
-Coming Soon.
+```java
+// Create a new instance of the MC3dstFile
+MC3dstFile mc3dstFile = new MC3dstFile();
 
-## How To Use (Command Line)
+// Use the parse method to parse a 3dst image
+mc3dstFile.parse("/path/to/image.3dst");
 
-Coming Soon.
+// Use the replace method to replace the image in a parsed 3dst image
+BufferedImage image = ImageIO.read(new File("/path/to/replacementImage.png"));
+// Choose your desired ColorFormat of ABGR, BGR, or RGBA5551
+mc3dstFile.replace(image, ColorFormat.ABGR); // this will override the existing 3dst image data
 
-## Minimum \<Insert Language Here> Version
+// Create a new 3dst image from scratch
+mc3dstFile.assemble(image, ColorFormat.ABGR, "/path/to/output.3dst");
+```
 
-* Version of Language 
+## Minimum Java Version
 
-## About This Project
+* Java 8
 
-This is a template repository that I can use to make new repositories I make in the future easier.
+## 3dst File Format
 
-# Screen Shots
-
-Coming Soon.
+* Coming Soon
