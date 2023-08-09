@@ -32,4 +32,4 @@ mc3dstFile.assemble(image, ColorFormat.ABGR, "/path/to/output.3dst");
 
 ## 3dst File Format
 
-* Coming Soon
+* See [3dst\_File\_Format.md](./3dst_File_Format.md)
