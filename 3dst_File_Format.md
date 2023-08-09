@@ -52,8 +52,7 @@ All Data is in Little Endian byte order.
 - Blocks     = A group of Cubes in a 2x2 grid (4x4 of pixels)
 - Chunks     = A group of Blocks in a 2x2 grid (8x8 of pixels)
 
-There are a total of 4 Chunks for a 16x16 image. 
-This changes depending on the size of the image,
+There are a total of 4 Chunks for a 16x16 image. This changes depending on the size of the image,
 the 3dst image width and height must be a power of 2 due to this pixel layout.
 ```
 
@@ -67,8 +66,7 @@ Pixel layout for a 16x16 image:
 
 Numbers indicating the array index of where the pixels belong to create the original (upside-down) image
 
-<p id="color-type-info"></p>
-### Color Type Info
+<h3 id="color-type-info">Color Type Info</h3>
 
 * Type `00 00 00 00` (0) = 4 byte ABGR texture
 * Type `01 00 00 00` (1) = 3 byte BGR texture
