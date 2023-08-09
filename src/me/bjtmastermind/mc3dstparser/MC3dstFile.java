@@ -55,7 +55,7 @@ public class MC3dstFile {
                 for (int i = 0; i < (this.width*this.height); i++) {
                     imageBinary[i] = buffer.getInt();
                 }
-                this.image = Utils.fixImage(Utils.ABGRToImage(imageBinary, this.width, this.height), false);
+                this.image = Utils.ABGRToImage(imageBinary, this.width, this.height);
                 break;
             }
             case BGR: {
@@ -63,7 +63,7 @@ public class MC3dstFile {
                 for (int i = 0; i < imageBinary.length; i++) {
                     imageBinary[i] = new BigInteger(new byte[] {buffer.get(), buffer.get(), buffer.get()});
                 }
-                this.image = Utils.fixImage(Utils.BGRToImage(imageBinary, this.width, this.height), false);
+                this.image = Utils.BGRToImage(imageBinary, this.width, this.height);
                 break;
             }
             case RGBA5551: {
@@ -71,17 +71,14 @@ public class MC3dstFile {
                 for (int i = 0; i < (this.width*this.height); i++) {
                     imageBinary[i] = buffer.getShort();
                 }
-                this.image = Utils.fixImage(Utils.shortRGBAToImage(imageBinary, this.width, this.height), false);
+                this.image = Utils.shortRGBAToImage(imageBinary, this.width, this.height);
                 break;
             }
             default:
                 System.err.println("Detected unknown texture type!");
                 return null;
         }
-
-        ImageIO.write(Utils.verticalFlipImage(this.image), "PNG", new File("/home/bjtmastermind/Desktop/"+filepath.split("/")[filepath.split("/").length - 1].replace(".3dst",".png")));
-        System.out.println("Saved File!");
-
+        this.image = Utils.verticalFlipImage(Utils.fixImage(this.image, false));
         return this;
     }
 
@@ -164,6 +161,19 @@ public class MC3dstFile {
             Files.write(output.toPath(), rawOutput.array());
             System.out.println("Assembled File Successful!");
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void extractToPNG(String outputPath) {
+        if (this.filename == null) {
+            System.err.println("Can't extract image because a 3dst file has not been parsed yet.\nUse the parse method to parse a 3dst image before calling this function.");
+            return;
+        }
+        try {
+            ImageIO.write(this.image, "PNG", new File(outputPath));
+            System.out.println("Extracted File to "+outputPath);
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
