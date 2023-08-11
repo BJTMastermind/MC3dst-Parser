@@ -9,63 +9,20 @@ import java.util.HashMap;
 
 public class Utils {
 
-    static HashMap<Integer, int[]> generateGridCoords(int width, int height) {
-        HashMap<Integer, int[]> gridCoords = new HashMap<>();
-        int gridX = 0;
-        int gridY = 0;
-        for (int y : generateColIndexes(width, height)) {
-            for (int x : generateRowIndexes(width)) {
-                gridCoords.put(x+y, new int[] {gridX, gridY});
-                gridX++;
-                if (gridX >= width) {
-                    gridX = 0;
-                }
-            }
-            gridY++;
-        }
-        return gridCoords;
-    }
+    static BufferedImage ABGRToImage(int[] imageData, int width, int height) {
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+        for (int i = 0; i < imageData.length; i++) {
+            int pixel = imageData[i];
+            int a = (pixel >> 0) & 0xFF;
+            int b = (pixel >> 8) & 0xFF;
+            int g = (pixel >> 16) & 0xFF;
+            int r = (pixel >> 24) & 0xFF;
 
-    static int toClosestPowerOfTwo(int num) {
-        if ((num != 0) && ((num & (num - 1)) == 0)) {
-            return num;
+            int argb = (a << 24) | (r << 16) | (g << 8) | (b << 0);
+            pixels[i] = argb;
         }
-        num--;
-        num |= num >> 1;
-        num |= num >> 2;
-        num |= num >> 4;
-        num |= num >> 8;
-        num |= num >> 16;
-        num++;
-        return num;
-    }
-
-    private static int wrap(int num) {
-        return num >= 0 ? num % 8 : (num % 8 + 8);
-    }
-
-    private static ArrayList<Integer> generateRowIndexes(int width) {
-        int[] xAddBy = {1, 3, 1, 11, 1, 3, 1, 43};
-        ArrayList<Integer> indexList = new ArrayList<>();
-        indexList.add(0);
-        int lastIdx = 0;
-        for (int i = 0; i < width - 1; i++) {
-            indexList.add(lastIdx + xAddBy[wrap(i)]);
-            lastIdx = indexList.get(indexList.size() - 1);
-        }
-        return indexList;
-    }
-
-    private static ArrayList<Integer> generateColIndexes(int width, int height) {
-        int[] yAddBy = {2, 6, 2, 22, 2, 6, 2, ((width * height) / (height / 2) * 4) - 42};
-        ArrayList<Integer> indexList = new ArrayList<>();
-        indexList.add(0);
-        int lastIdx = 0;
-        for (int i = 0; i < height - 1; i++) {
-            indexList.add(lastIdx + yAddBy[wrap(i)]);
-            lastIdx = indexList.get(indexList.size() - 1);
-        }
-        return indexList;
+        return img;
     }
 
     static BufferedImage BGRToImage(BigInteger[] imageData, int width, int height) {
@@ -83,7 +40,38 @@ public class Utils {
         return img;
     }
 
-    static BufferedImage shortRGBAToImage(short[] imageData, int width, int height) {
+    static BufferedImage descramble(BufferedImage src) {
+        return scrambles(src, false);
+    }
+
+    static HashMap<Integer, int[]> generateGridCoords(int width, int height) {
+        HashMap<Integer, int[]> gridCoords = new HashMap<>();
+        int gridX = 0;
+        int gridY = 0;
+        for (int y : generateColIndexes(width, height)) {
+            for (int x : generateRowIndexes(width)) {
+                gridCoords.put(x+y, new int[] {gridX, gridY});
+                gridX++;
+                if (gridX >= width) {
+                    gridX = 0;
+                }
+            }
+            gridY++;
+        }
+        return gridCoords;
+    }
+
+    static BufferedImage resizeToPowerOfTwo(BufferedImage src) {
+        BufferedImage out = new BufferedImage(Utils.toClosestPowerOfTwo(src.getWidth()), Utils.toClosestPowerOfTwo(src.getHeight()), src.getType());
+        for (int y = 0; y < src.getHeight(); y++) {
+            for (int x = 0; x < src.getWidth(); x++) {
+                out.setRGB(x, y, src.getRGB(x, y));
+            }
+        }
+        return out;
+    }
+
+    static BufferedImage RGBA5551ToImage(short[] imageData, int width, int height) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         for (int i = 0; i < imageData.length; i++) {
@@ -104,20 +92,22 @@ public class Utils {
         return img;
     }
 
-    static BufferedImage ABGRToImage(int[] imageData, int width, int height) {
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-        for (int i = 0; i < imageData.length; i++) {
-            int pixel = imageData[i];
-            int a = (pixel >> 0) & 0xFF;
-            int b = (pixel >> 8) & 0xFF;
-            int g = (pixel >> 16) & 0xFF;
-            int r = (pixel >> 24) & 0xFF;
+    static BufferedImage scramble(BufferedImage src) {
+        return scrambles(src, true);
+    }
 
-            int argb = (a << 24) | (r << 16) | (g << 8) | (b << 0);
-            pixels[i] = argb;
+    static int toClosestPowerOfTwo(int num) {
+        if ((num != 0) && ((num & (num - 1)) == 0)) {
+            return num;
         }
-        return img;
+        num--;
+        num |= num >> 1;
+        num |= num >> 2;
+        num |= num >> 4;
+        num |= num >> 8;
+        num |= num >> 16;
+        num++;
+        return num;
     }
 
     static BufferedImage verticalFlipImage(BufferedImage image) {
@@ -130,17 +120,31 @@ public class Utils {
         return flipped;
     }
 
-    static BufferedImage resizeToPowerOfTwo(BufferedImage src) {
-        BufferedImage out = new BufferedImage(Utils.toClosestPowerOfTwo(src.getWidth()), Utils.toClosestPowerOfTwo(src.getHeight()), src.getType());
-        for (int y = 0; y < src.getHeight(); y++) {
-            for (int x = 0; x < src.getWidth(); x++) {
-                out.setRGB(x, y, src.getRGB(x, y));
-            }
+    private static ArrayList<Integer> generateColIndexes(int width, int height) {
+        int[] yAddBy = {2, 6, 2, 22, 2, 6, 2, ((width * height) / (height / 2) * 4) - 42};
+        ArrayList<Integer> indexList = new ArrayList<>();
+        indexList.add(0);
+        int lastIdx = 0;
+        for (int i = 0; i < height - 1; i++) {
+            indexList.add(lastIdx + yAddBy[wrap(i)]);
+            lastIdx = indexList.get(indexList.size() - 1);
         }
-        return out;
+        return indexList;
     }
 
-    static BufferedImage fixImage(BufferedImage src, boolean scramble) {
+    private static ArrayList<Integer> generateRowIndexes(int width) {
+        int[] xAddBy = {1, 3, 1, 11, 1, 3, 1, 43};
+        ArrayList<Integer> indexList = new ArrayList<>();
+        indexList.add(0);
+        int lastIdx = 0;
+        for (int i = 0; i < width - 1; i++) {
+            indexList.add(lastIdx + xAddBy[wrap(i)]);
+            lastIdx = indexList.get(indexList.size() - 1);
+        }
+        return indexList;
+    }
+
+    private static BufferedImage scrambles(BufferedImage src, boolean scramble) {
         BufferedImage out = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
         HashMap<Integer, int[]> gridCoordsMappings = Utils.generateGridCoords(src.getWidth(), src.getHeight());
         int index = 0;
@@ -156,5 +160,9 @@ public class Utils {
             }
         }
         return out;
+    }
+
+    private static int wrap(int num) {
+        return num >= 0 ? num % 8 : (num % 8 + 8);
     }
 }

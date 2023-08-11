@@ -28,74 +28,12 @@ public class MC3dstFile {
     int originalHeight;
     BufferedImage image;
 
-    public MC3dstFile parse(String filepath) throws IOException {
-        this.filename = filepath;
-        byte[] bytes = Files.readAllBytes(Paths.get(new File(filepath).toURI()));
-
-        ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-
-        // Heading
-        this.header = buffer.getInt();
-        if (this.header != 0x54534433 /*3DST*/) {
-            System.out.println("Invaild header found! found: "+this.header);
-            return null;
-        }
-        this.version = buffer.getInt();
-        this.type = ColorFormat.formatFromId(buffer.getInt());
-        this.width = buffer.getInt();
-        this.height = buffer.getInt();
-        this.originalWidth = buffer.getInt();
-        this.originalHeight = buffer.getInt();
-        buffer.getInt(); // skip Unknown integer '01 00 00 00'
-
-        // Image Data
-        switch (this.type) {
-            case ABGR: {
-                int[] imageBinary = new int[(this.width*this.height)];
-                for (int i = 0; i < (this.width*this.height); i++) {
-                    imageBinary[i] = buffer.getInt();
-                }
-                this.image = Utils.ABGRToImage(imageBinary, this.width, this.height);
-                break;
-            }
-            case BGR: {
-                BigInteger[] imageBinary = new BigInteger[(this.width*this.height)];
-                for (int i = 0; i < imageBinary.length; i++) {
-                    imageBinary[i] = new BigInteger(new byte[] {buffer.get(), buffer.get(), buffer.get()});
-                }
-                this.image = Utils.BGRToImage(imageBinary, this.width, this.height);
-                break;
-            }
-            case RGBA5551: {
-                short[] imageBinary = new short[(this.width*this.height)];
-                for (int i = 0; i < (this.width*this.height); i++) {
-                    imageBinary[i] = buffer.getShort();
-                }
-                this.image = Utils.shortRGBAToImage(imageBinary, this.width, this.height);
-                break;
-            }
-            default:
-                System.err.println("Detected unknown texture type!");
-                return null;
-        }
-        this.image = Utils.verticalFlipImage(Utils.fixImage(this.image, false));
-        return this;
-    }
-
-    public void replace(BufferedImage newImage, ColorFormat format) {
-        if (this.filename == null) {
-            System.err.println("Can't replace image because a 3dst file has not been parsed yet.\nUse assemble method to create a new 3dst image.");
-            return;
-        }
-        assemble(newImage, format, this.filename);
-    }
-
     public void assemble(BufferedImage image, ColorFormat format, String filepath) {
         int imgOrigWidth = image.getWidth();
         int imgOrigHeight = image.getHeight();
         int imgWidth = Utils.toClosestPowerOfTwo(imgOrigWidth);
         int imgHeight = Utils.toClosestPowerOfTwo(imgOrigHeight);
-        BufferedImage scrambledImage = Utils.fixImage(Utils.verticalFlipImage(Utils.resizeToPowerOfTwo(image)), true);
+        BufferedImage scrambledImage = Utils.scramble(Utils.verticalFlipImage(Utils.resizeToPowerOfTwo(image)));
 
         int multiplier = 0;
         switch (format) {
@@ -176,5 +114,67 @@ public class MC3dstFile {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public MC3dstFile parse(String filepath) throws IOException {
+        this.filename = filepath;
+        byte[] bytes = Files.readAllBytes(Paths.get(new File(filepath).toURI()));
+
+        ByteBuffer buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+
+        // Heading
+        this.header = buffer.getInt();
+        if (this.header != 0x54534433 /*3DST*/) {
+            System.out.println("Invaild header found! found: "+this.header);
+            return null;
+        }
+        this.version = buffer.getInt();
+        this.type = ColorFormat.formatFromId(buffer.getInt());
+        this.width = buffer.getInt();
+        this.height = buffer.getInt();
+        this.originalWidth = buffer.getInt();
+        this.originalHeight = buffer.getInt();
+        buffer.getInt(); // skip Unknown integer '01 00 00 00'
+
+        // Image Data
+        switch (this.type) {
+            case ABGR: {
+                int[] imageBinary = new int[(this.width*this.height)];
+                for (int i = 0; i < (this.width*this.height); i++) {
+                    imageBinary[i] = buffer.getInt();
+                }
+                this.image = Utils.ABGRToImage(imageBinary, this.width, this.height);
+                break;
+            }
+            case BGR: {
+                BigInteger[] imageBinary = new BigInteger[(this.width*this.height)];
+                for (int i = 0; i < imageBinary.length; i++) {
+                    imageBinary[i] = new BigInteger(new byte[] {buffer.get(), buffer.get(), buffer.get()});
+                }
+                this.image = Utils.BGRToImage(imageBinary, this.width, this.height);
+                break;
+            }
+            case RGBA5551: {
+                short[] imageBinary = new short[(this.width*this.height)];
+                for (int i = 0; i < (this.width*this.height); i++) {
+                    imageBinary[i] = buffer.getShort();
+                }
+                this.image = Utils.RGBA5551ToImage(imageBinary, this.width, this.height);
+                break;
+            }
+            default:
+                System.err.println("Detected unknown texture type!");
+                return null;
+        }
+        this.image = Utils.verticalFlipImage(Utils.descramble(this.image));
+        return this;
+    }
+
+    public void replace(BufferedImage newImage, ColorFormat format) {
+        if (this.filename == null) {
+            System.err.println("Can't replace image because a 3dst file has not been parsed yet.\nUse assemble method to create a new 3dst image.");
+            return;
+        }
+        assemble(newImage, format, this.filename);
     }
 }
