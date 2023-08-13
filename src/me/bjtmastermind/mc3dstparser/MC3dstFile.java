@@ -28,12 +28,12 @@ public class MC3dstFile {
     int originalHeight;
     BufferedImage image;
 
-    public void assemble(BufferedImage image, ColorFormat format, String filepath) {
+    public void assemble(BufferedImage image, ColorFormat format, String outputFilepath) {
         int imgOrigWidth = image.getWidth();
         int imgOrigHeight = image.getHeight();
         int imgWidth = Utils.toClosestPowerOfTwo(imgOrigWidth);
         int imgHeight = Utils.toClosestPowerOfTwo(imgOrigHeight);
-        BufferedImage scrambledImage = Utils.scramble(Utils.verticalFlipImage(Utils.resizeToPowerOfTwo(image)));
+        BufferedImage scrambledImage = Utils.rescramble(Utils.verticalFlipImage(Utils.resizeToPowerOfTwo(image)), false);
 
         int multiplier = 0;
         switch (format) {
@@ -95,7 +95,7 @@ public class MC3dstFile {
                 }
             }
             channel.write(rawOutput);
-            File output = new File(filepath);
+            File output = new File(outputFilepath);
             Files.write(output.toPath(), rawOutput.array());
             System.out.println("Assembled File Successful!");
         } catch (IOException e) {
@@ -166,7 +166,7 @@ public class MC3dstFile {
                 System.err.println("Detected unknown texture type!");
                 return null;
         }
-        this.image = Utils.verticalFlipImage(Utils.descramble(this.image));
+        this.image = Utils.verticalFlipImage(Utils.rescramble(this.image, true));
         return this;
     }
 

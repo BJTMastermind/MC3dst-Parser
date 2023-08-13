@@ -40,10 +40,6 @@ public class Utils {
         return img;
     }
 
-    static BufferedImage descramble(BufferedImage src) {
-        return scrambles(src, false);
-    }
-
     static HashMap<Integer, int[]> generateGridCoords(int width, int height) {
         HashMap<Integer, int[]> gridCoords = new HashMap<>();
         int gridX = 0;
@@ -59,6 +55,24 @@ public class Utils {
             gridY++;
         }
         return gridCoords;
+    }
+
+    static BufferedImage rescramble(BufferedImage src, boolean descramble) {
+        BufferedImage out = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+        HashMap<Integer, int[]> gridCoordsMappings = Utils.generateGridCoords(src.getWidth(), src.getHeight());
+        int index = 0;
+        for (int y = 0; y < src.getHeight(); y++) {
+            for (int x = 0; x < src.getWidth(); x++) {
+                int[] gridCoords = gridCoordsMappings.get(index);
+                if (!descramble) {
+                    out.setRGB(x, y, src.getRGB(gridCoords[0], gridCoords[1]));
+                } else {
+                    out.setRGB(gridCoords[0], gridCoords[1], src.getRGB(x, y));
+                }
+                index++;
+            }
+        }
+        return out;
     }
 
     static BufferedImage resizeToPowerOfTwo(BufferedImage src) {
@@ -90,10 +104,6 @@ public class Utils {
             pixels[i] = argb;
         }
         return img;
-    }
-
-    static BufferedImage scramble(BufferedImage src) {
-        return scrambles(src, true);
     }
 
     static int toClosestPowerOfTwo(int num) {
@@ -142,24 +152,6 @@ public class Utils {
             lastIdx = indexList.get(indexList.size() - 1);
         }
         return indexList;
-    }
-
-    private static BufferedImage scrambles(BufferedImage src, boolean scramble) {
-        BufferedImage out = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
-        HashMap<Integer, int[]> gridCoordsMappings = Utils.generateGridCoords(src.getWidth(), src.getHeight());
-        int index = 0;
-        for (int y = 0; y < src.getHeight(); y++) {
-            for (int x = 0; x < src.getWidth(); x++) {
-                int[] gridCoords = gridCoordsMappings.get(index);
-                if (scramble) {
-                    out.setRGB(x, y, src.getRGB(gridCoords[0], gridCoords[1]));
-                } else {
-                    out.setRGB(gridCoords[0], gridCoords[1], src.getRGB(x, y));
-                }
-                index++;
-            }
-        }
-        return out;
     }
 
     private static int wrap(int num) {
