@@ -4,7 +4,7 @@ A Minecraft: 3DS Edition 3dst Image File Parser and Assembler
 
 ## How To Use
 
-* Download `MC3dstParser.java` from [Releases](https://github.com/BJTMastermind/MC3dst-Parser/releases) tab.
+* Download `MC3dst-Parser-v<version>.jar` from [Releases](https://github.com/BJTMastermind/MC3dst-Parser/releases) tab.
 * Add the library into your project.
 * Import `me.bjtmastermind.mc3dstparser.MC3dstFile` to use.
 
