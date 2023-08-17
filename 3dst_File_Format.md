@@ -1,6 +1,6 @@
 # Minecraft: New 3DS Edition - 3dst File Format
 
-All Data is in Little Endian byte order.
+All data is in little endian byte order.
 
 ### Heading
 
@@ -13,13 +13,13 @@ All Data is in Little Endian byte order.
 | Height | 4 | The height of this image as closest power of 2 |
 | Original Width | 4 | The original width of this image |
 | Original Height | 4 | The original height of this image |
-| Unused MIP Map Level | 4 | The MIP map level seems to always be `01 00 00 00` |
+| Unknown | 4 | Unknown what this is for seems to always be `01 00 00 00` |
 
 ### Image Data
 
 (repeat per (Width * Height))
 
-**If Type 0**
+**If Color Type is 0**
 
 | Name | Size (in bytes) | Description |
 |------|-----------------|-------------|
@@ -28,7 +28,7 @@ All Data is in Little Endian byte order.
 | Green | 1 | The pixels Green value |
 | Red | 1 | The pixels Red value |
 
-**If Type 1**
+**If Color Type is 1**
 
 | Name | Size (in bytes) | Description |
 |------|-----------------|-------------|
@@ -36,10 +36,10 @@ All Data is in Little Endian byte order.
 | Green | 1 | The pixels Green value |
 | Red | 1 | The pixels Red value |
 
-**If Type 2**
+**If Color Type is 2**
 
 | Name | Size (in BITS) | Description |
-|------|-----------------|-------------|
+|------|----------------|-------------|
 | Red | 5 | The pixels Red value |
 | Green | 5 | The pixels Green value |
 | Blue | 5 | The pixels Blue value |
@@ -48,7 +48,7 @@ All Data is in Little Endian byte order.
 ### Pixel Layout
 
 ```
-- Cubes      = A group of pixels in a 2x2 grid 
+- Cubes      = A group of pixels in a 2x2 grid
 - Blocks     = A group of Cubes in a 2x2 grid (4x4 of pixels)
 - Chunks     = A group of Blocks in a 2x2 grid (8x8 of pixels)
 
@@ -68,6 +68,6 @@ Numbers indicating the array index of where the pixels belong to create the orig
 
 <h3 id="color-type-info">Color Type Info</h3>
 
-* Type `00 00 00 00` (0) = 4 byte ABGR texture
-* Type `01 00 00 00` (1) = 3 byte BGR texture
-* Type `02 00 00 00` (2) = 2 byte HighColor (16-bit RGBA 5551) texture.
+* Color Type `00 00 00 00` (0) = 4 byte ABGR texture
+* Color Type `01 00 00 00` (1) = 3 byte BGR texture
+* Color Type `02 00 00 00` (2) = 2 byte HighColor (16-bit RGBA 5551) texture.

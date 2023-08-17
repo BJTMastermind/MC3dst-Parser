@@ -19,8 +19,8 @@ mc3dstFile.parse("/path/to/image.3dst");
 // Use the extractPNG method to generate a .png file from the parsed 3dst image
 mc3dstFile.extractPNG("/path/to/output.png");
 
-// Use the replace method to replace the image in a parsed 3dst image
 BufferedImage image = ImageIO.read(new File("/path/to/replacementImage.png"));
+// Use the replace method to replace the image in a parsed 3dst image from a .png file
 // Choose your desired ColorFormat of ABGR, BGR, or RGBA5551
 mc3dstFile.replace(image, ColorFormat.ABGR); // this will override the existing 3dst image data
 
