@@ -58,6 +58,12 @@ the 3dst image width and height must be a power of 2 due to this pixel layout.
 
 Minecraft's 3DST files don't store pixels how you would think, normally starting from the top left and going across to the end then repeating for the next row of pixels but that is not how .3dst images do things the pixels are stored in 8x8 pixel chunks with 4 4x4 pixel blocks with 4 2x2 pixel cubes each so your normal first 4 pixels in the top row are now the first 2 pixels of the first row + the first 2 pixels of the row below it.
 
+```
+Format:
+- ETC2_RGBA8
+```
+
+
 Pixel layout for a 16x16 image:
 
 <img width=512 src=https://github.com/BJTMastermind/MC3dst-Parser/assets/18742837/3a10acdb-1c16-4656-b870-bcf68b678db7>
@@ -68,6 +74,6 @@ Numbers indicating the array index of where the pixels belong to create the orig
 
 <h3 id="color-type-info">Color Type Info</h3>
 
-* Color Type `00 00 00 00` (0) = 4 byte ABGR texture
+* Color Type `00 00 00 00` (0) = 4 byte ARGB texture
 * Color Type `01 00 00 00` (1) = 3 byte BGR texture
 * Color Type `02 00 00 00` (2) = 2 byte HighColor (16-bit RGBA 5551) texture.
