@@ -2,9 +2,9 @@ package me.bjtmastermind.mc3dstparser;
 
 public enum ColorFormat {
     UNKNOWN(-1),
-    ABGR(0),
-    BGR(1),
-    RGBA5551(2);
+    ETC2_RGBA8(0),
+    RGB(1),
+    ABGR1555(2);
 
     private int value;
 
@@ -19,11 +19,11 @@ public enum ColorFormat {
     public static ColorFormat formatFromId(int id) {
         switch (id) {
             case 0:
-                return ABGR;
+                return ETC2_RGBA8;
             case 1:
-                return BGR;
+                return RGB;
             case 2:
-                return RGBA5551;
+                return ABGR1555;
             default:
                 return UNKNOWN;
         }

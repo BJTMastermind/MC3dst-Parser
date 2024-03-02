@@ -37,13 +37,13 @@ public class MC3dstFile {
 
         int multiplier = 0;
         switch (format) {
-            case ABGR:
+            case ETC2_RGBA8:
                 multiplier = 4;
                 break;
-            case BGR:
+            case RGB:
                 multiplier = 3;
                 break;
-            case RGBA5551:
+            case ABGR1555:
                 multiplier = 2;
                 break;
             default:
@@ -68,20 +68,20 @@ public class MC3dstFile {
             loopEscape:
             for (int y = 0; y < imgHeight; y++) {
                 for (int x = 0; x < imgWidth; x++) {
-                    Color pixel = new Color(scrambledImage.getRGB(x, y), (format != ColorFormat.BGR));
+                    Color pixel = new Color(scrambledImage.getRGB(x, y), (format != ColorFormat.RGB));
                     switch (format) {
-                        case ABGR:
+                        case ETC2_RGBA8:
                             rawOutput.put((byte) pixel.getAlpha());
                             rawOutput.put((byte) pixel.getBlue());
                             rawOutput.put((byte) pixel.getGreen());
                             rawOutput.put((byte) pixel.getRed());
                             break;
-                        case BGR:
+                        case RGB:
                             rawOutput.put((byte) pixel.getBlue());
                             rawOutput.put((byte) pixel.getGreen());
                             rawOutput.put((byte) pixel.getRed());
                             break;
-                        case RGBA5551:
+                        case ABGR1555:
                             int a1 = pixel.getAlpha() > 0 ? 1 : 0;
                             int r5 = Math.round((pixel.getRed() / 255f) * 31f);
                             int g5 = Math.round((pixel.getGreen() / 255f) * 31f);
@@ -138,28 +138,28 @@ public class MC3dstFile {
 
         // Image Data
         switch (this.type) {
-            case ABGR: {
+            case ETC2_RGBA8: {
                 int[] imageBinary = new int[(this.width*this.height)];
                 for (int i = 0; i < (this.width*this.height); i++) {
                     imageBinary[i] = buffer.getInt();
                 }
-                this.image = Utils.ABGRToImage(imageBinary, this.width, this.height);
+                this.image = Utils.ETC2RGBA8ToImage(imageBinary, this.width, this.height);
                 break;
             }
-            case BGR: {
+            case RGB: {
                 BigInteger[] imageBinary = new BigInteger[(this.width*this.height)];
                 for (int i = 0; i < imageBinary.length; i++) {
                     imageBinary[i] = new BigInteger(new byte[] {buffer.get(), buffer.get(), buffer.get()});
                 }
-                this.image = Utils.BGRToImage(imageBinary, this.width, this.height);
+                this.image = Utils.RGBToImage(imageBinary, this.width, this.height);
                 break;
             }
-            case RGBA5551: {
+            case ABGR1555: {
                 short[] imageBinary = new short[(this.width*this.height)];
                 for (int i = 0; i < (this.width*this.height); i++) {
                     imageBinary[i] = buffer.getShort();
                 }
-                this.image = Utils.RGBA5551ToImage(imageBinary, this.width, this.height);
+                this.image = Utils.ABGR1555ToImage(imageBinary, this.width, this.height);
                 break;
             }
             default:

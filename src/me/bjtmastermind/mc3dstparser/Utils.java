@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class Utils {
 
-    static BufferedImage ABGRToImage(int[] imageData, int width, int height) {
+    static BufferedImage ETC2RGBA8ToImage(int[] imageData, int width, int height) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         for (int i = 0; i < imageData.length; i++) {
@@ -25,7 +25,7 @@ public class Utils {
         return img;
     }
 
-    static BufferedImage BGRToImage(BigInteger[] imageData, int width, int height) {
+    static BufferedImage RGBToImage(BigInteger[] imageData, int width, int height) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         for (int i = 0, j = 0; i < imageData.length; i++) {
@@ -85,7 +85,7 @@ public class Utils {
         return out;
     }
 
-    static BufferedImage RGBA5551ToImage(short[] imageData, int width, int height) {
+    static BufferedImage ABGR1555ToImage(short[] imageData, int width, int height) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         for (int i = 0; i < imageData.length; i++) {
