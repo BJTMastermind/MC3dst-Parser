@@ -16,16 +16,16 @@ MC3dstFile mc3dstFile = new MC3dstFile();
 
 // Use the parse method to parse a 3dst image
 mc3dstFile.parse("/path/to/image.3dst");
-// Use the extractPNG method to generate a .png file from the parsed 3dst image
-mc3dstFile.extractPNG("/path/to/output.png");
+// Use the extractToPNG method to generate a .png file from the parsed 3dst image
+mc3dstFile.extractToPNG("/path/to/output.png");
 
 BufferedImage image = ImageIO.read(new File("/path/to/replacementImage.png"));
 // Use the replace method to replace the image in a parsed 3dst image from a .png file
-// Choose your desired ColorFormat of ABGR, BGR, or RGBA5551
-mc3dstFile.replace(image, ColorFormat.ABGR); // this will override the existing 3dst image data
+// Choose your desired ColorFormat of ETC2_RGBA, RGB, or ARGB1555
+mc3dstFile.replace(image, ColorFormat.ETC2_RGBA); // this will override the existing 3dst image data
 
 // Create a new 3dst image from scratch
-mc3dstFile.assemble(image, ColorFormat.ABGR, "/path/to/output.3dst");
+mc3dstFile.assemble(image, ColorFormat.ETC2_RGBA, "/path/to/output.3dst");
 ```
 
 ## Minimum Java Version
